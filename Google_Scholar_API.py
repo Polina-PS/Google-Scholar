@@ -1,4 +1,3 @@
-# -*- coding: cp1251 -*-
 import re
 from transliterate import translit
 from datetime import date
@@ -7,7 +6,7 @@ from to_html import HtmlTable
 
 API_KEY = "f3e66094ba741182a8ee80b1b9f6a021898aab97cfb9e5b1bb0fdb5cbd493fc0"
 
-#кол-во авторов и лет
+#ГЄГ®Г«-ГўГ® Г ГўГІГ®Г°Г®Гў ГЁ Г«ГҐГІ
 count_authors = 1
 count_years = 1
 
@@ -15,7 +14,7 @@ token = ""
 def id_author(token):
     params_all_authors = {
         "engine": "google_scholar_profiles",
-        "mauthors": "Санкт-Петербургский горный университет",
+        "mauthors": "Г‘Г Г­ГЄГІ-ГЏГҐГІГҐГ°ГЎГіГ°ГЈГ±ГЄГЁГ© ГЈГ®Г°Г­Г»Г© ГіГ­ГЁГўГҐГ°Г±ГЁГІГҐГІ",
         "api_key": API_KEY,
         "after_author": token
         }
@@ -51,9 +50,9 @@ def info_author(author_id):
     search = GoogleSearch(params_author)
     result_author = search.get_dict()
 
-    #ИМЯ
+    #Г€ГЊГџ
     name = result_author["author"]["name"]
-    name_ru = ' '.join(re.findall(r"\b([а-яА-ЯёЁ]+)\b", name))
+    name_ru = ' '.join(re.findall(r"\b([Г -ГїГЂ-ГџВёВЁ]+)\b", name))
     name_en = ' '.join(re.findall(r"\b([a-zA-Z]+)\b", name))
 
     if len(name_ru) == 0:
@@ -66,14 +65,14 @@ def info_author(author_id):
     #EMAIL
     email = result_author["author"]["email"]
     
-    #начальные значения
+    #Г­Г Г·Г Г«ГјГ­Г»ГҐ Г§Г­Г Г·ГҐГ­ГЁГї
     today = date.today()
     today_year = today.year
 
     articles = {}
     cit = {}
-    articles["Всего"] = 0
-    cit["Всего"] = 0
+    articles["Г‚Г±ГҐГЈГ®"] = 0
+    cit["Г‚Г±ГҐГЈГ®"] = 0
     for i in range(count_years):
         articles[int(today_year - i)] = 0
         cit[int(today_year - i)] = 0
@@ -86,7 +85,7 @@ def info_author(author_id):
         
     if int(result_author["articles"][0]["year"]) <= int(today_year - count_years):
         return(name_ru, name_en, email, articles, cit, co_authors, author_1, author_first, without_author)
-    #КОЛ-ВО СТАТЕЙ И ЦИТИРОВАНИЙ    
+    #ГЉГЋГ‹-Г‚ГЋ Г‘Г’ГЂГ’Г…Г‰ Г€ Г–Г€Г’Г€ГђГЋГ‚ГЂГЌГ€Г‰    
     all_year = []
     start = 0
     y = today_year
@@ -96,21 +95,21 @@ def info_author(author_id):
             if year["year"] != "":
                 y = int(year["year"])
                 if y > (today_year - count_years):
-                    all_year.append(year) #вся инф за определенные года
-                    articles[y] += 1      #кол-во статей
+                    all_year.append(year) #ГўГ±Гї ГЁГ­Гґ Г§Г  Г®ГЇГ°ГҐГ¤ГҐГ«ГҐГ­Г­Г»ГҐ ГЈГ®Г¤Г 
+                    articles[y] += 1      #ГЄГ®Г«-ГўГ® Г±ГІГ ГІГҐГ©
                     if year["cited_by"]["value"]:
-                        cit[y] += int(year["cited_by"]["value"])   #кол-во цитирований
+                        cit[y] += int(year["cited_by"]["value"])   #ГЄГ®Г«-ГўГ® Г¶ГЁГІГЁГ°Г®ГўГ Г­ГЁГ©
         if y > (today_year - count_years):
             start += 1
-            result_author = Next_Page(start, params_author)  #переход на след страницу
+            result_author = Next_Page(start, params_author)  #ГЇГҐГ°ГҐГµГ®Г¤ Г­Г  Г±Г«ГҐГ¤ Г±ГІГ°Г Г­ГЁГ¶Гі
         else:
             break
         
     for i in articles:
-        articles["Всего"] += int(articles[i])
-        cit["Всего"] += int(cit[i])
+        articles["Г‚Г±ГҐГЈГ®"] += int(articles[i])
+        cit["Г‚Г±ГҐГЈГ®"] += int(cit[i])
 
-    #АВТОР И СОАВТОРЫ
+    #ГЂГ‚Г’ГЋГђ Г€ Г‘ГЋГЂГ‚Г’ГЋГђГ›
     all_authors = []
 
     for author in all_year:
@@ -121,7 +120,7 @@ def info_author(author_id):
                 result_article = article(citation_id)
                 all_authors.append(result_article["citation"]["authors"])
             else:
-                all_authors.append(author["authors"])  #все авторы
+                all_authors.append(author["authors"])  #ГўГ±ГҐ Г ГўГІГ®Г°Г»
         
     all_au = []
     all_sn = []
@@ -137,13 +136,13 @@ def info_author(author_id):
             for s in st:
                 surname = ' '.join(s.split()[-1:])
                 all_surname += surname + " "
-            all_sn.append(all_surname)     #только фамилии
+            all_sn.append(all_surname)     #ГІГ®Г«ГјГЄГ® ГґГ Г¬ГЁГ«ГЁГЁ
         else:
             surname = ' '.join(string.split()[-1:])
             all_sn.append(surname)
             for n in all_name:
                 if n == surname:
-                    author_1 += 1   #этот автор является единственным автором статьи
+                    author_1 += 1   #ГЅГІГ®ГІ Г ГўГІГ®Г° ГїГўГ«ГїГҐГІГ±Гї ГҐГ¤ГЁГ­Г±ГІГўГҐГ­Г­Г»Г¬ Г ГўГІГ®Г°Г®Г¬ Г±ГІГ ГІГјГЁ
         
     str_surname = []
     author_f = 0
@@ -158,10 +157,10 @@ def info_author(author_id):
                 if n[0] == s:
                     author_f += 1
 
-    if articles["Всего"] >= au:             #автора нет в списке авторов статьи
-        without_author = articles["Всего"] - au
+    if articles["Г‚Г±ГҐГЈГ®"] >= au:             #Г ГўГІГ®Г°Г  Г­ГҐГІ Гў Г±ГЇГЁГ±ГЄГҐ Г ГўГІГ®Г°Г®Гў Г±ГІГ ГІГјГЁ
+        without_author = articles["Г‚Г±ГҐГЈГ®"] - au
 
-    author_first = author_f - author_1      #автор записан первый среди соавторов
+    author_first = author_f - author_1      #Г ГўГІГ®Г° Г§Г ГЇГЁГ±Г Г­ ГЇГҐГ°ГўГ»Г© Г±Г°ГҐГ¤ГЁ Г±Г®Г ГўГІГ®Г°Г®Гў
         
     list_not_author = []
     ln_author = []
@@ -180,12 +179,12 @@ def info_author(author_id):
         word_en = translit(word, language_code='ru', reversed=True)
         if word_en not in ln_author:
             ln_author.append(word_en)
-    co_authors = len(ln_author)    #кол-во соавторов
+    co_authors = len(ln_author)    #ГЄГ®Г«-ГўГ® Г±Г®Г ГўГІГ®Г°Г®Гў
        
     return(name_ru, name_en, email, articles, cit, co_authors, author_1, author_first, without_author)
 
 
-#запись всех id
+#Г§Г ГЇГЁГ±Гј ГўГ±ГҐГµ id
 all_id = []
 
 while len(all_id) < count_authors:
@@ -196,7 +195,7 @@ while len(all_id) < count_authors:
     token = result_all_authors["pagination"]["next_page_token"]
 
 #html
-headers = ["Имя на русском", "Имя на английском", "Email", "Кол-во статей", "Кол-во цитирований", "Кол-во соавторов", "Кол-во статей, где автор единственный", "Кол-во статей, где автор первый в списке", "Кол-во статей, где нет автора"]
+headers = ["Г€Г¬Гї Г­Г  Г°ГіГ±Г±ГЄГ®Г¬", "Г€Г¬Гї Г­Г  Г Г­ГЈГ«ГЁГ©Г±ГЄГ®Г¬", "Email", "ГЉГ®Г«-ГўГ® Г±ГІГ ГІГҐГ©", "ГЉГ®Г«-ГўГ® Г¶ГЁГІГЁГ°Г®ГўГ Г­ГЁГ©", "ГЉГ®Г«-ГўГ® Г±Г®Г ГўГІГ®Г°Г®Гў", "ГЉГ®Г«-ГўГ® Г±ГІГ ГІГҐГ©, ГЈГ¤ГҐ Г ГўГІГ®Г° ГҐГ¤ГЁГ­Г±ГІГўГҐГ­Г­Г»Г©", "ГЉГ®Г«-ГўГ® Г±ГІГ ГІГҐГ©, ГЈГ¤ГҐ Г ГўГІГ®Г° ГЇГҐГ°ГўГ»Г© Гў Г±ГЇГЁГ±ГЄГҐ", "ГЉГ®Г«-ГўГ® Г±ГІГ ГІГҐГ©, ГЈГ¤ГҐ Г­ГҐГІ Г ГўГІГ®Г°Г "]
 table = HtmlTable(headers)
 
 for a_id in all_id:
@@ -204,8 +203,8 @@ for a_id in all_id:
     info = info_author(author_id)
     table.to_table(info)
 
-h1 = "<h1>Статистика по данным авторов Санкт-Петербургского горного университета</h1>"
-h2 = "<h2>Источник данных: <a href='https://scholar.google.ru/schhp?hl=ru'>Google Академия</a></h2>"
+h1 = "<h1>Г‘ГІГ ГІГЁГ±ГІГЁГЄГ  ГЇГ® Г¤Г Г­Г­Г»Г¬ Г ГўГІГ®Г°Г®Гў Г‘Г Г­ГЄГІ-ГЏГҐГІГҐГ°ГЎГіГ°ГЈГ±ГЄГ®ГЈГ® ГЈГ®Г°Г­Г®ГЈГ® ГіГ­ГЁГўГҐГ°Г±ГЁГІГҐГІГ </h1>"
+h2 = "<h2>Г€Г±ГІГ®Г·Г­ГЁГЄ Г¤Г Г­Г­Г»Гµ: <a href='https://scholar.google.ru/schhp?hl=ru'>Google ГЂГЄГ Г¤ГҐГ¬ГЁГї</a></h2>"
 out = "<link rel='stylesheet' href='style.css'>" + h1 + h2 + table.get_table()
 f = open('table.html', 'w')
 f.write(out)
